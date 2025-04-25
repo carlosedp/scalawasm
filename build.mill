@@ -1,0 +1,37 @@
+package build
+
+import mill._, scalalib._, scalajslib._
+import mill.scalajslib.api._
+
+object wasm extends ScalaJSModule {
+  def scalaVersion                      = "3.6.4"
+  def scalaJSVersion                    = "1.18.2"
+  def moduleKind                        = ModuleKind.ESModule
+  def moduleSplitStyle                  = ModuleSplitStyle.FewestModules
+  def scalaJSExperimentalUseWebAssembly = true
+  def jsEnvConfig = JsEnvConfig.NodeJs(args =
+    List(
+      "--experimental-wasm-exnref",
+      "--experimental-wasm-jspi",
+      "--experimental-wasm-imported-strings",
+      "--turboshaft-wasm",
+    )
+  )
+
+  def ivyDeps = Agg(
+    ivy"org.scala-js::scalajs-dom::2.8.0"
+  )
+}
+
+object webserver extends ScalaModule {
+  def scalaVersion = "3.6.4"
+  def resources = Task.Sources {
+    super.resources() ++
+      Seq(wasm.fastLinkJS().dest)
+  }
+
+  def ivyDeps = Agg(
+    ivy"com.lihaoyi::cask:0.10.2",
+    ivy"com.lihaoyi::os-lib:0.11.4",
+  )
+}

@@ -3,7 +3,6 @@
 //> using jsEmitWasm
 //> using jsModuleKind es
 //> using jsModuleSplitStyleStr fewestmodules
-
 //> using dep org.scala-js::scalajs-dom::2.8.0
 
 import scala.scalajs.js
