@@ -65,6 +65,35 @@ Using mill centralizes all operation around it's build project. Below is a compi
 
 And you can open the web browser and navigate to `http://localhost:8080` to see the output of the Scala program in the browser console and main website which have a button with a counter that increments on click.
 
+## Building a container image
+
+You can build a container image using the provided Dockerfile. The Dockerfile is based on nodejs 23 as it's runtime and uses the `package.json` file to run the generated WASM.
+
+To build the container manually, you can use the following command:
+
+```bash
+# First build the WASM package
+scala-cli --power package -f wasm/src/scalawasm.scala
+# Then build the image
+podman build -t scala-wasm-example .
+```
+
+To run the container, you can use the following command:
+
+```bash
+podman run -it --rm scala-wasm-example
+```
+
+There's also some convenience targets on Mill build to help the process.
+
+```sh
+# To build the image
+./mill image.build
+
+# To run the image
+./mill image.run
+```
+
 ## Conclusion
 
 This example demonstrates how to compile Scala code to WebAssembly using ScalaJS and run it in both Node.js and a web browser. You can extend this example by adding more complex Scala code and exploring the capabilities of WebAssembly in your projects. Also Scala libraries built for ScalaJs can be used for your projects.

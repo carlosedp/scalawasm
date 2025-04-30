@@ -5,7 +5,7 @@ import mill.scalajslib.api._
 
 object wasm extends ScalaJSModule {
   def scalaVersion                      = "3.6.4"
-  def scalaJSVersion                    = "1.18.2"
+  def scalaJSVersion                    = "1.19.0"
   def moduleKind                        = ModuleKind.ESModule
   def moduleSplitStyle                  = ModuleSplitStyle.FewestModules
   def scalaJSExperimentalUseWebAssembly = true
@@ -34,4 +34,24 @@ object webserver extends ScalaModule {
     ivy"com.lihaoyi::cask:0.10.2",
     ivy"com.lihaoyi::os-lib:0.11.4",
   )
+}
+
+object image extends Module {
+  val runtime =
+    if (os.proc("which", "podman").call(check = false).exitCode == 0) "podman"
+    else "docker"
+  val imageName = "wasm-example"
+  val tag       = "latest"
+
+  def build() = T.command {
+    val maindir = wasm.fastLinkJS().dest.path.relativeTo(T.workspace)
+    os.proc(runtime, "build", "-t", s"$imageName:$tag", ".", s"--build-arg=MAINDIR=$maindir")
+      .call(cwd = T.workspace)
+  }
+
+  def run() = T.command {
+    os.proc(runtime, "run", "--rm", s"$imageName:$tag")
+      .call(cwd = T.workspace, stdout = os.Inherit, stderr = os.Inherit)
+  }
+
 }

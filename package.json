@@ -1,0 +1,10 @@
+{
+  "name": "scalawasm",
+  "version": "0.1.0",
+  "description": "A simple Scala WASM runner for executing WebAssembly modules.",
+  "main": "main.js/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-wasm-exnref --experimental-wasm-jspi --experimental-wasm-imported-strings --turboshaft-wasm main.js/main.js"
+  }
+}
